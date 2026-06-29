@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bootcamp Claude — Passez de l'usage curieux à l'usage productif</title>
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              violet: '#534AB7',
+              anthracite: '#1F2A44',
+              orange: '#F97316',
+              cream: '#FAFAFA'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Police Inter via Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; }
+
+    /* Dégradé subtil du hero : violet de marque -> blanc cassé */
+    .hero-gradient {
+      background:
+        radial-gradient(60% 80% at 20% 0%, rgba(83, 74, 183, 0.18) 0%, rgba(83, 74, 183, 0) 60%),
+        linear-gradient(180deg, #EEECF9 0%, #FAFAFA 70%);
+    }
+
+    /* Animations légères au scroll */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity .7s ease, transform .7s ease;
+      will-change: opacity, transform;
+    }
+    .reveal.is-visible {
+      opacity: 1;
+      transform: none;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { opacity: 1; transform: none; transition: none; }
+      #progress-bar { transition: none; }
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body class="bg-brand-cream text-brand-anthracite antialiased">
+
+  <!-- ===================== NAVIGATION STICKY ===================== -->
+  <nav class="sticky top-0 z-50 border-b border-gray-200 bg-white/85 backdrop-blur">
+    <div class="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
+      <a href="#hero" class="flex items-center gap-2 font-bold tracking-tight text-brand-anthracite">
+        <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-brand-violet text-sm font-bold text-white">S</span>
+        STUDERIA
+      </a>
+      <a href="#inscription"
+         class="rounded-lg bg-brand-orange px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:ring-offset-2">
+        Je m'inscris
+      </a>
+    </div>
+  </nav>
+
+  <!-- ===================== HERO SECTION ===================== -->
+  <header id="hero" class="hero-gradient">
+    <div class="mx-auto max-w-4xl px-6 py-20 text-center sm:py-28">
+      <span class="inline-flex items-center gap-2 rounded-full border border-brand-violet/20 bg-white/70 px-4 py-1.5 text-sm font-medium text-brand-violet">
+        <span class="h-2 w-2 rounded-full bg-brand-orange"></span>
+        Formation certifiée Qualiopi · 100 places
+      </span>
+
+      <h1 class="mt-6 text-4xl font-extrabold tracking-tight sm:text-6xl">
+        Bootcamp Claude
+      </h1>
+      <p class="mx-auto mt-5 max-w-2xl text-lg text-gray-600 sm:text-xl">
+        Une journée pour passer de l'usage curieux à l'usage productif.
+      </p>
+
+      <!-- Infos clés -->
+      <dl class="mx-auto mt-10 grid max-w-3xl grid-cols-1 gap-4 sm:grid-cols-3">
+        <div class="rounded-xl border border-gray-200 bg-white/80 p-5 text-left shadow-sm">
+          <dt class="text-sm font-medium text-gray-500">Date</dt>
+          <dd class="mt-1 font-semibold">Samedi 10 mai 2026<br><span class="font-normal text-gray-600">10h00 – 18h00</span></dd>
+        </div>
+        <div class="rounded-xl border border-gray-200 bg-white/80 p-5 text-left shadow-sm">
+          <dt class="text-sm font-medium text-gray-500">Format</dt>
+          <dd class="mt-1 font-semibold">En ligne<br><span class="font-normal text-gray-600">7 heures de formation</span></dd>
+        </div>
+        <div class="rounded-xl border border-gray-200 bg-white/80 p-5 text-left shadow-sm">
+          <dt class="text-sm font-medium text-gray-500">Tarif</dt>
+          <dd class="mt-1 font-semibold">490 € HT<br><span class="font-normal text-gray-600">590 € TTC</span></dd>
+        </div>
+      </dl>
+
+      <a href="#inscription"
+         class="mt-10 inline-block rounded-lg bg-brand-orange px-8 py-4 text-base font-semibold text-white shadow-md transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:ring-offset-2">
+        Je m'inscris
+      </a>
+    </div>
+  </header>
+
+  <!-- ===================== BARRE DE PROGRESSION D'INSCRIPTION ===================== -->
+  <section aria-label="Remplissage des places" class="border-b border-gray-200 bg-white">
+    <div class="mx-auto max-w-3xl px-6 py-8">
+      <div class="flex items-baseline justify-between gap-4">
+        <span id="progress-label" class="text-sm font-semibold text-brand-anthracite sm:text-base">100 places restantes sur 100</span>
+        <span id="progress-percent" class="text-sm font-medium text-gray-500">0 % rempli</span>
+      </div>
+      <div class="mt-3 h-3 w-full overflow-hidden rounded-full bg-gray-200"
+           role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <div id="progress-bar"
+             class="h-full rounded-full bg-brand-orange transition-[width] duration-700 ease-out"
+             style="width: 0%"></div>
+      </div>
+    </div>
+  </section>
+
+  <main>
+
+    <!-- ===================== SECTION : L'ARC DE LA JOURNÉE ===================== -->
+    <section class="border-y border-gray-200 bg-gray-100/70">
+      <div class="mx-auto max-w-6xl px-6 py-20 sm:py-24">
+        <div class="reveal mx-auto max-w-2xl text-center">
+          <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">L'arc de la journée</h2>
+          <p class="mt-4 text-lg text-gray-600">Une progression en trois temps, du dialogue à la création.</p>
+        </div>
+
+        <div class="mt-14 grid grid-cols-1 gap-6 md:grid-cols-3">
+          <!-- Matin -->
+          <div class="reveal rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
+            <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-violet/10 text-brand-violet">
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" />
+              </svg>
+            </div>
+            <p class="mt-5 text-sm font-semibold uppercase tracking-wide text-brand-orange">Matin</p>
+            <h3 class="mt-1 text-xl font-bold">Converser</h3>
+            <p class="mt-3 text-gray-600">Apprendre à parler avec Claude : poser le bon contexte, formuler des demandes claires, itérer.</p>
+          </div>
+
+          <!-- Mi-journée -->
+          <div class="reveal rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
+            <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-violet/10 text-brand-violet">
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.241.437-.613.43-.992a7.723 7.723 0 0 1 0-.255c.007-.378-.138-.75-.43-.991l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+              </svg>
+            </div>
+            <p class="mt-5 text-sm font-semibold uppercase tracking-wide text-brand-orange">Mi-journée</p>
+            <h3 class="mt-1 text-xl font-bold">Déléguer</h3>
+            <p class="mt-3 text-gray-600">Automatiser vos tâches répétitives avec Cowork : déléguer un travail et récupérer un résultat exploitable.</p>
+          </div>
+
+          <!-- Après-midi -->
+          <div class="reveal rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
+            <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-violet/10 text-brand-violet">
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3-4.5 16.5" />
+              </svg>
+            </div>
+            <p class="mt-5 text-sm font-semibold uppercase tracking-wide text-brand-orange">Après-midi</p>
+            <h3 class="mt-1 text-xl font-bold">Créer</h3>
+            <p class="mt-3 text-gray-600">Construire une application concrète avec Claude, de l'idée au prototype fonctionnel, sans écrire de code.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== SECTION : CE QUE VOUS ALLEZ APPRENDRE ===================== -->
+    <section class="bg-brand-cream">
+      <div class="mx-auto max-w-6xl px-6 py-20 sm:py-28">
+        <div class="reveal mx-auto max-w-2xl text-center">
+          <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Ce que vous allez apprendre</h2>
+          <p class="mt-4 text-lg text-gray-600">Six compétences directement applicables à votre quotidien professionnel.</p>
+        </div>
+
+        <div class="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <!-- Carte 1 -->
+          <div class="reveal rounded-2xl border border-gray-200 bg-white p-7 shadow-sm transition hover:shadow-md">
+            <div class="flex h-11 w-11 items-center justify-center rounded-lg bg-brand-orange/10 text-brand-orange">
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456Z" />
+              </svg>
+            </div>
+            <h3 class="mt-5 text-lg font-bold">Prompter comme un pro</h3>
+            <p class="mt-2 text-gray-600">Structurer vos demandes pour obtenir des réponses précises et fiables, du premier coup.</p>
+          </div>
+
+          <!-- Carte 2 -->
+          <div class="reveal rounded-2xl border border-gray-200 bg-white p-7 shadow-sm transition hover:shadow-md">
+            <div class="flex h-11 w-11 items-center justify-center rounded-lg bg-brand-orange/10 text-brand-orange">
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+              </svg>
+            </div>
+            <h3 class="mt-5 text-lg font-bold">Générer des documents</h3>
+            <p class="mt-2 text-gray-600">Produire des fichiers Word, Excel et PowerPoint prêts à l'emploi en quelques minutes.</p>
+          </div>
+
+          <!-- Carte 3 -->
+          <div class="reveal rounded-2xl border border-gray-200 bg-white p-7 shadow-sm transition hover:shadow-md">
+            <div class="flex h-11 w-11 items-center justify-center rounded-lg bg-brand-orange/10 text-brand-orange">
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" />
+              </svg>
+            </div>
+            <h3 class="mt-5 text-lg font-bold">Créer des dashboards vivants</h3>
+            <p class="mt-2 text-gray-600">Transformer vos données brutes en tableaux de bord clairs, lisibles et actualisables.</p>
+          </div>
+
+          <!-- Carte 4 -->
+          <div class="reveal rounded-2xl border border-gray-200 bg-white p-7 shadow-sm transition hover:shadow-md">
+            <div class="flex h-11 w-11 items-center justify-center rounded-lg bg-brand-orange/10 text-brand-orange">
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+              </svg>
+            </div>
+            <h3 class="mt-5 text-lg font-bold">Automatiser vos routines</h3>
+            <p class="mt-2 text-gray-600">Mettre en place des automatisations qui tournent seules : briefs, rapports, suivis récurrents.</p>
+          </div>
+
+          <!-- Carte 5 -->
+          <div class="reveal rounded-2xl border border-gray-200 bg-white p-7 shadow-sm transition hover:shadow-md">
+            <div class="flex h-11 w-11 items-center justify-center rounded-lg bg-brand-orange/10 text-brand-orange">
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6.429 9.75 2.25 12l4.179 2.25m0-4.5 5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0 4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0-5.571 3-5.571-3" />
+              </svg>
+            </div>
+            <h3 class="mt-5 text-lg font-bold">Construire une app sans coder</h3>
+            <p class="mt-2 text-gray-600">Concevoir un outil sur mesure pour votre équipe, de l'idée au prototype, sans une ligne de code.</p>
+          </div>
+
+          <!-- Carte 6 -->
+          <div class="reveal rounded-2xl border border-gray-200 bg-white p-7 shadow-sm transition hover:shadow-md">
+            <div class="flex h-11 w-11 items-center justify-center rounded-lg bg-brand-orange/10 text-brand-orange">
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.623 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
+              </svg>
+            </div>
+            <h3 class="mt-5 text-lg font-bold">Maîtriser limites et sécurité</h3>
+            <p class="mt-2 text-gray-600">Connaître les risques, protéger vos données sensibles et garder le contrôle sur les résultats.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== SECTION : TÉMOIGNAGES ===================== -->
+    <section class="border-y border-gray-200 bg-gray-100/70">
+      <div class="mx-auto max-w-6xl px-6 py-20 sm:py-28">
+        <div class="reveal mx-auto max-w-2xl text-center">
+          <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Ils ont suivi le bootcamp</h2>
+          <p class="mt-4 text-lg text-gray-600">Des retours de professionnels, après une seule journée de formation.</p>
+        </div>
+
+        <div class="mt-14 grid grid-cols-1 gap-6 md:grid-cols-3">
+          <!-- Témoignage 1 -->
+          <figure class="reveal flex flex-col rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
+            <blockquote class="flex-1 text-lg leading-relaxed text-brand-anthracite">
+              « J'ai gagné 2 heures par jour sur la gestion de mes emails et de mes documents. »
+            </blockquote>
+            <figcaption class="mt-6 flex items-center gap-3 border-t border-gray-100 pt-5">
+              <span class="flex h-11 w-11 items-center justify-center rounded-full bg-brand-violet/10 text-sm font-semibold text-brand-violet">MD</span>
+              <span>
+                <span class="block font-semibold">Marie D.</span>
+                <span class="block text-sm text-gray-500">Office Manager · Atelier Norvent</span>
+              </span>
+            </figcaption>
+          </figure>
+
+          <!-- Témoignage 2 -->
+          <figure class="reveal flex flex-col rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
+            <blockquote class="flex-1 text-lg leading-relaxed text-brand-anthracite">
+              « J'ai construit un outil de devis pour mon équipe en 30 minutes. »
+            </blockquote>
+            <figcaption class="mt-6 flex items-center gap-3 border-t border-gray-100 pt-5">
+              <span class="flex h-11 w-11 items-center justify-center rounded-full bg-brand-violet/10 text-sm font-semibold text-brand-violet">TR</span>
+              <span>
+                <span class="block font-semibold">Thomas R.</span>
+                <span class="block text-sm text-gray-500">Consultant · Cabinet Verel</span>
+              </span>
+            </figcaption>
+          </figure>
+
+          <!-- Témoignage 3 -->
+          <figure class="reveal flex flex-col rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
+            <blockquote class="flex-1 text-lg leading-relaxed text-brand-anthracite">
+              « Le brief matinal automatique a changé ma façon de commencer la journée. »
+            </blockquote>
+            <figcaption class="mt-6 flex items-center gap-3 border-t border-gray-100 pt-5">
+              <span class="flex h-11 w-11 items-center justify-center rounded-full bg-brand-violet/10 text-sm font-semibold text-brand-violet">SL</span>
+              <span>
+                <span class="block font-semibold">Sophie L.</span>
+                <span class="block text-sm text-gray-500">Directrice RH · Groupe Maelis</span>
+              </span>
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== SECTION : LE FORMATEUR ===================== -->
+    <section class="bg-brand-cream">
+      <div class="mx-auto max-w-4xl px-6 py-20 sm:py-28">
+        <div class="reveal flex flex-col items-center gap-8 rounded-2xl border border-gray-200 bg-white p-8 text-center shadow-sm sm:flex-row sm:p-12 sm:text-left">
+          <!-- Photo placeholder -->
+          <div class="flex h-28 w-28 flex-shrink-0 items-center justify-center rounded-full bg-gray-200 text-2xl font-bold text-gray-500">
+            FF
+          </div>
+          <div>
+            <p class="text-sm font-semibold uppercase tracking-wide text-brand-orange">Le formateur</p>
+            <h2 class="mt-1 text-2xl font-bold sm:text-3xl">Faouzi Fieve</h2>
+            <p class="mt-4 text-gray-600">
+              Co-fondateur d'IA Infinity, agence spécialisée en intelligence artificielle et automatisation.
+              Formateur certifié Qualiopi via Studeria. Il accompagne les professionnels dans leur montée
+              en compétence sur l'IA depuis 2023.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== SECTION : INFORMATIONS PRATIQUES ===================== -->
+    <section class="border-y border-gray-200 bg-gray-100/70">
+      <div class="mx-auto max-w-6xl px-6 py-20 sm:py-28">
+        <div class="reveal mx-auto max-w-2xl text-center">
+          <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Informations pratiques</h2>
+          <p class="mt-4 text-lg text-gray-600">Tout ce qu'il faut savoir avant de vous inscrire.</p>
+        </div>
+
+        <div class="mt-14 grid grid-cols-2 gap-6 lg:grid-cols-4">
+          <div class="reveal rounded-2xl border border-gray-200 bg-white p-6 text-center shadow-sm">
+            <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-brand-violet/10 text-brand-violet">
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
+              </svg>
+            </div>
+            <p class="mt-4 text-sm font-medium text-gray-500">Date</p>
+            <p class="mt-1 font-semibold">10 mai 2026</p>
+          </div>
+
+          <div class="reveal rounded-2xl border border-gray-200 bg-white p-6 text-center shadow-sm">
+            <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-brand-violet/10 text-brand-violet">
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25m18 0A2.25 2.25 0 0 0 18.75 3H5.25A2.25 2.25 0 0 0 3 5.25m18 0V12a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 12V5.25" />
+              </svg>
+            </div>
+            <p class="mt-4 text-sm font-medium text-gray-500">Format</p>
+            <p class="mt-1 font-semibold">En ligne</p>
+          </div>
+
+          <div class="reveal rounded-2xl border border-gray-200 bg-white p-6 text-center shadow-sm">
+            <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-brand-violet/10 text-brand-violet">
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+              </svg>
+            </div>
+            <p class="mt-4 text-sm font-medium text-gray-500">Durée</p>
+            <p class="mt-1 font-semibold">7 heures</p>
+          </div>
+
+          <div class="reveal rounded-2xl border border-gray-200 bg-white p-6 text-center shadow-sm">
+            <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-brand-violet/10 text-brand-violet">
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+              </svg>
+            </div>
+            <p class="mt-4 text-sm font-medium text-gray-500">Tarif</p>
+            <p class="mt-1 font-semibold">490 € HT</p>
+          </div>
+        </div>
+
+        <!-- Badge Qualiopi / financement -->
+        <div class="reveal mx-auto mt-10 flex max-w-2xl flex-col items-center justify-center gap-4 rounded-2xl border border-brand-violet/20 bg-white p-6 text-center shadow-sm sm:flex-row sm:text-left">
+          <span class="inline-flex items-center gap-2 rounded-full bg-brand-violet/10 px-4 py-2 text-sm font-semibold text-brand-violet">
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            </svg>
+            Certifié Qualiopi
+          </span>
+          <p class="text-gray-600">Formation éligible à un <span class="font-semibold text-brand-anthracite">financement OPCO</span>. Contactez-nous pour le montage du dossier.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== FORMULAIRE D'INSCRIPTION ===================== -->
+    <section id="inscription" class="bg-brand-cream">
+      <div class="mx-auto max-w-3xl px-6 py-20 sm:py-28">
+        <div class="reveal text-center">
+          <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Réservez votre place</h2>
+          <p class="mt-4 text-lg text-gray-600">100 places disponibles. Remplissez le formulaire pour vous inscrire.</p>
+          <p class="mt-3 inline-flex items-center gap-2 rounded-full bg-brand-orange/10 px-4 py-1.5 text-sm font-semibold text-brand-orange">
+            <span class="h-2 w-2 rounded-full bg-brand-orange"></span>
+            <span id="places-counter">100 places restantes sur 100</span>
+          </p>
+        </div>
+
+        <!-- Message de confirmation (caché par défaut) -->
+        <div id="confirmation"
+             class="hidden mt-8 rounded-xl border border-green-300 bg-green-50 p-4 text-center text-green-800">
+          Inscription enregistrée. Merci&nbsp;!
+        </div>
+
+        <!-- Formulaire -->
+        <form id="inscription-form" class="mt-10 grid grid-cols-1 gap-5 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:grid-cols-2 sm:p-8">
+          <div>
+            <label for="prenom" class="block text-sm font-medium text-gray-700">Prénom *</label>
+            <input id="prenom" name="prenom" type="text" required
+                   class="mt-1.5 w-full rounded-lg border border-gray-300 px-3 py-2.5 outline-none transition focus:border-brand-violet focus:ring-2 focus:ring-brand-violet/30">
+          </div>
+          <div>
+            <label for="nom" class="block text-sm font-medium text-gray-700">Nom *</label>
+            <input id="nom" name="nom" type="text" required
+                   class="mt-1.5 w-full rounded-lg border border-gray-300 px-3 py-2.5 outline-none transition focus:border-brand-violet focus:ring-2 focus:ring-brand-violet/30">
+          </div>
+          <div class="sm:col-span-2">
+            <label for="email" class="block text-sm font-medium text-gray-700">Email *</label>
+            <input id="email" name="email" type="email" required
+                   class="mt-1.5 w-full rounded-lg border border-gray-300 px-3 py-2.5 outline-none transition focus:border-brand-violet focus:ring-2 focus:ring-brand-violet/30">
+          </div>
+          <div>
+            <label for="entreprise" class="block text-sm font-medium text-gray-700">Entreprise *</label>
+            <input id="entreprise" name="entreprise" type="text" required
+                   class="mt-1.5 w-full rounded-lg border border-gray-300 px-3 py-2.5 outline-none transition focus:border-brand-violet focus:ring-2 focus:ring-brand-violet/30">
+          </div>
+          <div>
+            <label for="poste" class="block text-sm font-medium text-gray-700">Poste *</label>
+            <input id="poste" name="poste" type="text" required
+                   class="mt-1.5 w-full rounded-lg border border-gray-300 px-3 py-2.5 outline-none transition focus:border-brand-violet focus:ring-2 focus:ring-brand-violet/30">
+          </div>
+          <div class="sm:col-span-2">
+            <label for="telephone" class="block text-sm font-medium text-gray-700">Téléphone <span class="text-gray-400">(optionnel)</span></label>
+            <input id="telephone" name="telephone" type="tel"
+                   class="mt-1.5 w-full rounded-lg border border-gray-300 px-3 py-2.5 outline-none transition focus:border-brand-violet focus:ring-2 focus:ring-brand-violet/30">
+          </div>
+
+          <div class="sm:col-span-2">
+            <button type="submit"
+                    class="w-full rounded-lg bg-brand-orange px-6 py-3.5 text-base font-semibold text-white shadow-md transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:ring-offset-2">
+              Valider mon inscription
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===================== PANNEAU ADMIN (liste des inscrits) ===================== -->
+  <section id="admin-panel" class="hidden border-t border-gray-200 bg-gray-100/70">
+    <div class="mx-auto max-w-6xl px-6 py-16">
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2 class="text-2xl font-bold tracking-tight">Liste des inscrits</h2>
+          <p class="mt-1 text-sm text-gray-500"><span id="admin-count">0</span> inscription(s) enregistrée(s) — données locales (localStorage).</p>
+        </div>
+        <div class="flex gap-3">
+          <button id="export-csv"
+                  class="rounded-lg bg-brand-violet px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-brand-violet focus:ring-offset-2">
+            Exporter en CSV
+          </button>
+          <button id="admin-close"
+                  class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-600 transition hover:bg-gray-50">
+            Fermer
+          </button>
+        </div>
+      </div>
+
+      <div class="mt-6 overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
+        <table class="min-w-full divide-y divide-gray-200 text-left text-sm">
+          <thead class="bg-gray-50 text-xs uppercase tracking-wide text-gray-500">
+            <tr>
+              <th scope="col" class="px-4 py-3 font-semibold">Prénom</th>
+              <th scope="col" class="px-4 py-3 font-semibold">Nom</th>
+              <th scope="col" class="px-4 py-3 font-semibold">Email</th>
+              <th scope="col" class="px-4 py-3 font-semibold">Entreprise</th>
+              <th scope="col" class="px-4 py-3 font-semibold">Date d'inscription</th>
+            </tr>
+          </thead>
+          <tbody id="admin-tbody" class="divide-y divide-gray-100">
+            <!-- Lignes générées en JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="border-t border-gray-200 bg-white">
+    <div class="mx-auto flex max-w-6xl flex-col gap-3 px-6 py-10 text-sm text-gray-500 sm:flex-row sm:items-center sm:justify-between">
+      <p>STUDERIA — organisme de formation certifié Qualiopi</p>
+      <nav class="flex items-center gap-6">
+        <a href="#" class="transition hover:text-brand-anthracite">CGV</a>
+        <a href="#" class="transition hover:text-brand-anthracite">Mentions légales</a>
+        <a href="#" id="admin-link" class="text-gray-400 transition hover:text-brand-anthracite">Accès admin</a>
+      </nav>
+    </div>
+  </footer>
+
+  <!-- ===================== LOGIQUE JAVASCRIPT ===================== -->
+  <script>
+    const STORAGE_KEY = 'bootcamp_inscriptions';
+    const TOTAL_PLACES = 100;
+
+    // Repli en mémoire si localStorage est indisponible
+    // (ouverture en file://, iframe protégée, navigation privée…)
+    let memoryStore = null;
+
+    function getInscriptions() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+      } catch (e) {
+        return memoryStore || [];
+      }
+    }
+
+    function saveInscriptions(list) {
+      memoryStore = list;
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+      } catch (e) {
+        // localStorage bloqué : on conserve en mémoire pour la session
+        console.warn('localStorage indisponible, stockage en mémoire uniquement.', e);
+      }
+    }
+
+    function updateCounter() {
+      const count = getInscriptions().length;
+      const remaining = Math.max(TOTAL_PLACES - count, 0);
+      const text = remaining + ' place' + (remaining > 1 ? 's' : '') +
+        ' restante' + (remaining > 1 ? 's' : '') + ' sur ' + TOTAL_PLACES;
+
+      document.getElementById('places-counter').textContent = text;
+
+      // Barre de progression (remplissage = inscrits / total)
+      const pct = Math.min(Math.round((count / TOTAL_PLACES) * 100), 100);
+      const bar = document.getElementById('progress-bar');
+      const label = document.getElementById('progress-label');
+      const percent = document.getElementById('progress-percent');
+      const track = bar ? bar.parentElement : null;
+
+      if (label) label.textContent = text;
+      if (percent) percent.textContent = pct + ' % rempli';
+      if (track) track.setAttribute('aria-valuenow', pct);
+      if (bar) {
+        // rAF garantit la transition CSS, y compris au tout premier rendu
+        requestAnimationFrame(function () { bar.style.width = pct + '%'; });
+      }
+
+      return remaining;
+    }
+
+    // --- Admin : rendu du tableau des inscrits ---
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    function formatDate(iso) {
+      const d = new Date(iso);
+      if (isNaN(d)) return iso || '';
+      return d.toLocaleString('fr-FR', {
+        day: '2-digit', month: '2-digit', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+      });
+    }
+
+    function renderAdminTable() {
+      const list = getInscriptions();
+      const tbody = document.getElementById('admin-tbody');
+      const count = document.getElementById('admin-count');
+      const exportBtn = document.getElementById('export-csv');
+
+      count.textContent = list.length;
+      exportBtn.disabled = list.length === 0;
+      exportBtn.classList.toggle('opacity-50', list.length === 0);
+      exportBtn.classList.toggle('cursor-not-allowed', list.length === 0);
+
+      if (list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-6 text-center text-gray-400">Aucun inscrit pour le moment.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = list.map(function (i) {
+        return '<tr class="hover:bg-gray-50">' +
+          '<td class="px-4 py-3">' + escapeHtml(i.prenom) + '</td>' +
+          '<td class="px-4 py-3">' + escapeHtml(i.nom) + '</td>' +
+          '<td class="px-4 py-3 text-gray-600">' + escapeHtml(i.email) + '</td>' +
+          '<td class="px-4 py-3">' + escapeHtml(i.entreprise) + '</td>' +
+          '<td class="px-4 py-3 text-gray-600">' + escapeHtml(formatDate(i.date)) + '</td>' +
+          '</tr>';
+      }).join('');
+    }
+
+    // --- Admin : export CSV ---
+    function exportCsv() {
+      const list = getInscriptions();
+      if (list.length === 0) return;
+
+      // Séparateur ';' pour une ouverture directe dans Excel (FR)
+      const SEP = ';';
+      const headers = ['Prénom', 'Nom', 'Email', 'Entreprise', 'Poste', 'Téléphone', 'Date d\'inscription'];
+
+      function cell(value) {
+        const v = (value == null ? '' : String(value));
+        // Échappe les guillemets et entoure de guillemets si besoin
+        if (v.indexOf('"') !== -1 || v.indexOf(SEP) !== -1 || v.indexOf('\n') !== -1) {
+          return '"' + v.replace(/"/g, '""') + '"';
+        }
+        return v;
+      }
+
+      const rows = list.map(function (i) {
+        return [i.prenom, i.nom, i.email, i.entreprise, i.poste, i.telephone, formatDate(i.date)]
+          .map(cell).join(SEP);
+      });
+
+      // BOM UTF-8 pour conserver les accents dans Excel
+      const csv = '﻿' + headers.map(cell).join(SEP) + '\r\n' + rows.join('\r\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const stamp = new Date().toISOString().slice(0, 10);
+      a.href = url;
+      a.download = 'inscriptions-bootcamp-' + stamp + '.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      updateCounter();
+
+      // --- Animations légères au scroll ---
+      const reveals = document.querySelectorAll('.reveal');
+      if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(function (entries, obs) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              obs.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.12 });
+        reveals.forEach(function (el) { observer.observe(el); });
+      } else {
+        reveals.forEach(function (el) { el.classList.add('is-visible'); });
+      }
+
+      // --- Formulaire d'inscription ---
+      const form = document.getElementById('inscription-form');
+      const confirmation = document.getElementById('confirmation');
+
+      form.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const inscriptions = getInscriptions();
+
+        // Plus de places disponibles
+        if (TOTAL_PLACES - inscriptions.length <= 0) {
+          confirmation.textContent = 'Désolé, le bootcamp est complet.';
+          confirmation.classList.remove('hidden', 'border-green-300', 'bg-green-50', 'text-green-800');
+          confirmation.classList.add('border-red-300', 'bg-red-50', 'text-red-800');
+          return;
+        }
+
+        const data = {
+          prenom: form.prenom.value.trim(),
+          nom: form.nom.value.trim(),
+          email: form.email.value.trim(),
+          entreprise: form.entreprise.value.trim(),
+          poste: form.poste.value.trim(),
+          telephone: form.telephone.value.trim(),
+          date: new Date().toISOString()
+        };
+
+        inscriptions.push(data);
+        saveInscriptions(inscriptions);
+
+        // Message de confirmation
+        confirmation.textContent = 'Inscription enregistrée. Merci ' + data.prenom + ' ! Vous recevrez un email de confirmation.';
+        confirmation.classList.remove('hidden');
+        confirmation.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        form.reset();
+        updateCounter();
+        // Garde le tableau admin à jour s'il est ouvert
+        renderAdminTable();
+      });
+
+      // --- Accès admin (liste des inscrits) ---
+      const adminLink = document.getElementById('admin-link');
+      const adminPanel = document.getElementById('admin-panel');
+      const adminClose = document.getElementById('admin-close');
+      const exportBtn = document.getElementById('export-csv');
+
+      adminLink.addEventListener('click', function (event) {
+        event.preventDefault();
+        renderAdminTable();
+        adminPanel.classList.remove('hidden');
+        adminPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+
+      adminClose.addEventListener('click', function () {
+        adminPanel.classList.add('hidden');
+      });
+
+      exportBtn.addEventListener('click', exportCsv);
+    });
+  </script>
+
+</body>
+</html>
